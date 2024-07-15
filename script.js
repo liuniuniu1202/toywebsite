@@ -1,4 +1,4 @@
-console.log("Script loaded dd");
+console.log("Script loaded");
 
 function generateKey(seed, length) {
     let random = new Random(seed);
@@ -96,7 +96,6 @@ async function purple(text, seed) {
     const base64Encrypted = base64Encode(xorEncrypted);
     const { shuffled, indexes } = shuffleEncrypt(base64Encrypted, seed);
     const indexesStr = indexes.join(',');
-    const finalEncrypted = shuffled + "|" + indexesStr;
     document.getElementById('outputText').value = shuffled;
     document.getElementById('outputIndexes').value = indexesStr;  // Store indexes separately for use in decryption
 }
