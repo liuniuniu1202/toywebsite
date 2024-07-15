@@ -1,4 +1,4 @@
-console.log("Script loaded 2");
+console.log("Script loaded 3");
 
 function generateKey(seed, length) {
     let random = new Random(seed);
