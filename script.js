@@ -70,7 +70,7 @@ class Random {
     }
 }
 
-async function performAction(action) {
+function performAction(action) {
     console.log(`Action: ${action}`);
     const text = document.getElementById('inputText').value;
     const seed = parseInt(document.getElementById('seed').value);
@@ -87,7 +87,7 @@ async function performAction(action) {
     }
 }
 
-async function purple(text, seed) {
+function purple(text, seed) {
     console.log("Performing purple action");
     const encoder = new TextEncoder();
     const textBytes = encoder.encode(text);
@@ -100,7 +100,7 @@ async function purple(text, seed) {
     document.getElementById('outputIndexes').value = indexesStr;  // Store indexes separately for use in decryption
 }
 
-async function pink(text, seed) {
+function pink(text, seed) {
     console.log("Performing pink action");
     const indexesStr = document.getElementById('outputIndexes').value;  // Retrieve indexes for decryption
     if (!indexesStr) {
@@ -121,5 +121,9 @@ async function pink(text, seed) {
 
 function copyToClipboard() {
     const outputText = document.getElementById('outputText');
-    navigator.clipboard.writeText(outputText.value);
+    navigator.clipboard.writeText(outputText.value).then(() => {
+        console.log("Copied to clipboard");
+    }).catch(err => {
+        console.error("Could not copy text: ", err);
+    });
 }
