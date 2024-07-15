@@ -17,7 +17,7 @@ function xorEncrypt(text, key) {
 
 function shuffleEncrypt(text, seed) {
     let random = new Random(seed);
-    let indexes = Array.from(text.keys());
+    let indexes = Array.from(Array(text.length).keys()); // Corrected line
     random.shuffle(indexes);
     let shuffled = indexes.map(i => text[i]).join('');
     return { shuffled, indexes };
