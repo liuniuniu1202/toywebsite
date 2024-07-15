@@ -17,7 +17,7 @@ function xorEncrypt(text, key) {
 
 function shuffleEncrypt(text, seed) {
     let random = new Random(seed);
-    let indexes = Array.from(Array(text.length).keys()); // Corrected line
+    let indexes = Array.from(Array(text.length).keys());
     random.shuffle(indexes);
     let shuffled = indexes.map(i => text[i]).join('');
     return { shuffled, indexes };
@@ -47,15 +47,23 @@ class Random {
     }
 }
 
-function encrypt() {
+function performAction(action) {
     const text = document.getElementById('inputText').value;
     const seed = parseInt(document.getElementById('seed').value);
     
     if (!text || isNaN(seed)) {
-        alert("Please enter valid text and seed.");
+        alert("Please enter valid text and month.");
         return;
     }
     
+    if (action === 'purple') {
+        purple(text, seed);
+    } else if (action === 'pink') {
+        pink(text, seed);
+    }
+}
+
+function purple(text, seed) {
     const key = generateKey(seed, text.length);
     const xorEncrypted = xorEncrypt(text, key);
     const base64Encrypted = btoa(xorEncrypted);
@@ -65,18 +73,10 @@ function encrypt() {
     document.getElementById('outputText').value = finalEncrypted + JSON.stringify(indexes);
 }
 
-function decrypt() {
-    const text = document.getElementById('inputText').value;
-    const seed = parseInt(document.getElementById('seed').value);
-    
-    if (!text || isNaN(seed)) {
-        alert("Please enter valid text and seed.");
-        return;
-    }
-
+function pink(text, seed) {
     const indexesStart = text.lastIndexOf('[');
     if (indexesStart === -1) {
-        alert("Invalid encrypted text format.");
+        alert("Invalid format.");
         return;
     }
 
