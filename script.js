@@ -10,11 +10,22 @@ function generateKey(seed, length) {
 }
 
 function xorEncrypt(text, key) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
     let result = [];
-    for (let i = 0; i < text.length; i++) {
-        result.push(text.charCodeAt(i) ^ key[i % key.length]);
+    for (let i = 0; i < data.length; i++) {
+        result.push(data[i] ^ key[i % key.length]);
     }
-    return String.fromCharCode.apply(null, result);
+    return new Uint8Array(result);
+}
+
+function xorDecrypt(data, key) {
+    let result = [];
+    for (let i = 0; i < data.length; i++) {
+        result.push(data[i] ^ key[i % key.length]);
+    }
+    const decoder = new TextDecoder();
+    return decoder.decode(new Uint8Array(result));
 }
 
 function shuffleEncrypt(text, seed) {
@@ -72,7 +83,7 @@ function purple(text, seed) {
     console.log("Performing purple action");
     const key = generateKey(seed, text.length);
     const xorEncrypted = xorEncrypt(text, key);
-    const base64Encrypted = btoa(xorEncrypted);
+    const base64Encrypted = btoa(String.fromCharCode.apply(null, xorEncrypted));
     const { shuffled, indexes } = shuffleEncrypt(base64Encrypted, seed);
     currentIndexes = indexes;
 
@@ -89,9 +100,9 @@ function pink(text, seed) {
 
     const base64Shuffled = text.split('').filter((_, i) => i % 2 !== 0).join('');
     const base64Decrypted = shuffleDecrypt(base64Shuffled, currentIndexes);
-    const xorEncrypted = atob(base64Decrypted);
+    const xorEncrypted = new Uint8Array(atob(base64Decrypted).split("").map(c => c.charCodeAt(0)));
     const key = generateKey(seed, xorEncrypted.length);
-    const decryptedText = xorEncrypt(xorEncrypted, key);
+    const decryptedText = xorDecrypt(xorEncrypted, key);
 
     document.getElementById('outputText').value = decryptedText;
 }
