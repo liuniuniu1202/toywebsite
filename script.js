@@ -49,6 +49,8 @@ class Random {
     }
 }
 
+let currentIndexes = [];
+
 function performAction(action) {
     console.log(`Action: ${action}`);
     const text = document.getElementById('inputText').value;
@@ -72,24 +74,21 @@ function purple(text, seed) {
     const xorEncrypted = xorEncrypt(text, key);
     const base64Encrypted = btoa(xorEncrypted);
     const { shuffled, indexes } = shuffleEncrypt(base64Encrypted, seed);
+    currentIndexes = indexes;
 
     const finalEncrypted = Array.from(shuffled).map(c => String.fromCharCode(33 + Math.random() * 94) + c).join('');
-    document.getElementById('outputText').value = finalEncrypted + JSON.stringify(indexes);
+    document.getElementById('outputText').value = finalEncrypted;
 }
 
 function pink(text, seed) {
     console.log("Performing pink action");
-    const indexesStart = text.lastIndexOf('[');
-    if (indexesStart === -1) {
-        alert("Invalid format.");
+    if (currentIndexes.length === 0) {
+        alert("No previous encryption data available.");
         return;
     }
 
-    const encryptedText = text.slice(0, indexesStart);
-    const indexes = JSON.parse(text.slice(indexesStart));
-
-    const base64Shuffled = encryptedText.split('').filter((_, i) => i % 2 !== 0).join('');
-    const base64Decrypted = shuffleDecrypt(base64Shuffled, indexes);
+    const base64Shuffled = text.split('').filter((_, i) => i % 2 !== 0).join('');
+    const base64Decrypted = shuffleDecrypt(base64Shuffled, currentIndexes);
     const xorEncrypted = atob(base64Decrypted);
     const key = generateKey(seed, xorEncrypted.length);
     const decryptedText = xorEncrypt(xorEncrypted, key);
