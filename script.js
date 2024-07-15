@@ -105,7 +105,7 @@ function purple(text, seed) {
     const { shuffled, indexes } = shuffleEncrypt(base64Encrypted, seed);
     currentIndexes = indexes;
 
-    const finalEncrypted = Array.from(shuffled).map(c => String.fromCharCode(33 + Math.random() * 94) + c).join('');
+    const finalEncrypted = shuffled.split('').map(c => String.fromCharCode(33 + Math.random() * 94) + c).join('');
     document.getElementById('outputText').value = finalEncrypted;
 }
 
