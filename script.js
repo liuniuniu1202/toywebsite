@@ -1,4 +1,4 @@
-console.log("Script loaded cc");
+console.log("Script loaded dd");
 
 function generateKey(seed, length) {
     let random = new Random(seed);
@@ -97,21 +97,20 @@ async function purple(text, seed) {
     const { shuffled, indexes } = shuffleEncrypt(base64Encrypted, seed);
     const indexesStr = indexes.join(',');
     const finalEncrypted = shuffled + "|" + indexesStr;
-    document.getElementById('outputText').value = finalEncrypted;
+    document.getElementById('outputText').value = shuffled;
+    document.getElementById('outputIndexes').value = indexesStr;  // Store indexes separately for use in decryption
 }
 
 async function pink(text, seed) {
     console.log("Performing pink action");
-    const parts = text.split('|');
-    if (parts.length !== 2) {
-        alert("Invalid format.");
+    const indexesStr = document.getElementById('outputIndexes').value;  // Retrieve indexes for decryption
+    if (!indexesStr) {
+        alert("No previous encryption data available.");
         return;
     }
     
-    const encryptedPart = parts[0];
-    const indexes = parts[1].split(',').map(Number);
-
-    const base64Decrypted = shuffleDecrypt(encryptedPart, indexes);
+    const indexes = indexesStr.split(',').map(Number);
+    const base64Decrypted = shuffleDecrypt(text, indexes);
     const xorEncrypted = base64Decode(base64Decrypted);
     const key = generateKey(seed, xorEncrypted.length);
     const decryptedBytes = xorDecrypt(xorEncrypted, key);
@@ -123,7 +122,5 @@ async function pink(text, seed) {
 
 function copyToClipboard() {
     const outputText = document.getElementById('outputText');
-    outputText.select();
-    document.execCommand("copy");
-    alert("Copied to clipboard!");
+    navigator.clipboard.writeText(outputText.value);
 }
