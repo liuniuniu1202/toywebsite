@@ -120,3 +120,8 @@ async function pink(text, seed) {
 
     document.getElementById('outputText').value = decryptedText;
 }
+
+function copyToClipboard() {
+    const outputText = document.getElementById('outputText');
+    navigator.clipboard.writeText(outputText.value);
+}
