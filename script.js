@@ -50,6 +50,12 @@ class Random {
 function encrypt() {
     const text = document.getElementById('inputText').value;
     const seed = parseInt(document.getElementById('seed').value);
+    
+    if (!text || isNaN(seed)) {
+        alert("Please enter valid text and seed.");
+        return;
+    }
+    
     const key = generateKey(seed, text.length);
     const xorEncrypted = xorEncrypt(text, key);
     const base64Encrypted = btoa(xorEncrypted);
@@ -62,7 +68,18 @@ function encrypt() {
 function decrypt() {
     const text = document.getElementById('inputText').value;
     const seed = parseInt(document.getElementById('seed').value);
+    
+    if (!text || isNaN(seed)) {
+        alert("Please enter valid text and seed.");
+        return;
+    }
+
     const indexesStart = text.lastIndexOf('[');
+    if (indexesStart === -1) {
+        alert("Invalid encrypted text format.");
+        return;
+    }
+
     const encryptedText = text.slice(0, indexesStart);
     const indexes = JSON.parse(text.slice(indexesStart));
 
