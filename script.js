@@ -1,4 +1,4 @@
-console.log("Script loaded aaa");
+console.log("Script loaded bb");
 
 function generateKey(seed, length) {
     let random = new Random(seed);
@@ -9,9 +9,7 @@ function generateKey(seed, length) {
     return key;
 }
 
-function xorEncrypt(text, key) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(text);
+function xorEncrypt(data, key) {
     let result = [];
     for (let i = 0; i < data.length; i++) {
         result.push(data[i] ^ key[i % key.length]);
@@ -24,24 +22,18 @@ function xorDecrypt(data, key) {
     for (let i = 0; i < data.length; i++) {
         result.push(data[i] ^ key[i % key.length]);
     }
-    const decoder = new TextDecoder();
-    return decoder.decode(new Uint8Array(result));
+    return new Uint8Array(result);
 }
 
 function base64Encode(arrayBuffer) {
-    let binary = '';
-    let bytes = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < bytes.byteLength; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary);
+    return btoa(String.fromCharCode.apply(null, new Uint8Array(arrayBuffer)));
 }
 
 function base64Decode(base64) {
-    let binary = atob(base64);
-    let bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-        bytes[i] = binary.charCodeAt(i);
+    let binaryString = atob(base64);
+    let bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes;
 }
@@ -78,7 +70,7 @@ class Random {
     }
 }
 
-function performAction(action) {
+async function performAction(action) {
     console.log(`Action: ${action}`);
     const text = document.getElementById('inputText').value;
     const seed = parseInt(document.getElementById('seed').value);
@@ -95,10 +87,12 @@ function performAction(action) {
     }
 }
 
-function purple(text, seed) {
+async function purple(text, seed) {
     console.log("Performing purple action");
-    const key = generateKey(seed, text.length);
-    const xorEncrypted = xorEncrypt(text, key);
+    const encoder = new TextEncoder();
+    const textBytes = encoder.encode(text);
+    const key = generateKey(seed, textBytes.length);
+    const xorEncrypted = xorEncrypt(textBytes, key);
     const base64Encrypted = base64Encode(xorEncrypted);
     const { shuffled, indexes } = shuffleEncrypt(base64Encrypted, seed);
     const indexesStr = indexes.join(',');
@@ -106,7 +100,7 @@ function purple(text, seed) {
     document.getElementById('outputText').value = finalEncrypted;
 }
 
-function pink(text, seed) {
+async function pink(text, seed) {
     console.log("Performing pink action");
     const parts = text.split('|');
     if (parts.length !== 2) {
@@ -120,7 +114,9 @@ function pink(text, seed) {
     const base64Decrypted = shuffleDecrypt(encryptedPart, indexes);
     const xorEncrypted = base64Decode(base64Decrypted);
     const key = generateKey(seed, xorEncrypted.length);
-    const decryptedText = xorDecrypt(xorEncrypted, key);
+    const decryptedBytes = xorDecrypt(xorEncrypted, key);
+    const decoder = new TextDecoder();
+    const decryptedText = decoder.decode(decryptedBytes);
 
     document.getElementById('outputText').value = decryptedText;
 }
