@@ -1,4 +1,4 @@
-console.log("Script loaded");
+console.log("Script loaded 1");
 
 function generateKey(seed, length) {
     let random = new Random(seed);
@@ -102,7 +102,7 @@ function purple(text, seed) {
     const base64Encrypted = base64Encode(xorEncrypted);
     const { shuffled, indexes } = shuffleEncrypt(base64Encrypted, seed);
     const indexesStr = indexes.join(',');
-    const finalEncrypted = Array.from(shuffled).map(c => String.fromCharCode(33 + Math.random() * 94) + c).join('') + "|" + indexesStr;
+    const finalEncrypted = shuffled + "|" + indexesStr;
     document.getElementById('outputText').value = finalEncrypted;
 }
 
@@ -117,8 +117,7 @@ function pink(text, seed) {
     const encryptedPart = parts[0];
     const indexes = parts[1].split(',').map(Number);
 
-    const base64Shuffled = encryptedPart.split('').filter((_, i) => i % 2 !== 0).join('');
-    const base64Decrypted = shuffleDecrypt(base64Shuffled, indexes);
+    const base64Decrypted = shuffleDecrypt(encryptedPart, indexes);
     const xorEncrypted = base64Decode(base64Decrypted);
     const key = generateKey(seed, xorEncrypted.length);
     const decryptedText = xorDecrypt(xorEncrypted, key);
