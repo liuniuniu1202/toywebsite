@@ -78,8 +78,6 @@ class Random {
     }
 }
 
-let currentIndexes = [];
-
 function performAction(action) {
     console.log(`Action: ${action}`);
     const text = document.getElementById('inputText').value;
@@ -103,21 +101,24 @@ function purple(text, seed) {
     const xorEncrypted = xorEncrypt(text, key);
     const base64Encrypted = base64Encode(xorEncrypted);
     const { shuffled, indexes } = shuffleEncrypt(base64Encrypted, seed);
-    currentIndexes = indexes;
-
-    const finalEncrypted = shuffled.split('').map(c => String.fromCharCode(33 + Math.random() * 94) + c).join('');
+    const indexesStr = indexes.join(',');
+    const finalEncrypted = Array.from(shuffled).map(c => String.fromCharCode(33 + Math.random() * 94) + c).join('') + "|" + indexesStr;
     document.getElementById('outputText').value = finalEncrypted;
 }
 
 function pink(text, seed) {
     console.log("Performing pink action");
-    if (currentIndexes.length === 0) {
-        alert("No previous encryption data available.");
+    const parts = text.split('|');
+    if (parts.length !== 2) {
+        alert("Invalid format.");
         return;
     }
+    
+    const encryptedPart = parts[0];
+    const indexes = parts[1].split(',').map(Number);
 
-    const base64Shuffled = text.split('').filter((_, i) => i % 2 !== 0).join('');
-    const base64Decrypted = shuffleDecrypt(base64Shuffled, currentIndexes);
+    const base64Shuffled = encryptedPart.split('').filter((_, i) => i % 2 !== 0).join('');
+    const base64Decrypted = shuffleDecrypt(base64Shuffled, indexes);
     const xorEncrypted = base64Decode(base64Decrypted);
     const key = generateKey(seed, xorEncrypted.length);
     const decryptedText = xorDecrypt(xorEncrypted, key);
