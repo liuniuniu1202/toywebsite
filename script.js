@@ -123,5 +123,9 @@ async function pink(text, seed) {
 
 function copyToClipboard() {
     const outputText = document.getElementById('outputText');
-    navigator.clipboard.writeText(outputText.value);
+    navigator.clipboard.writeText(outputText.value).then(() => {
+        console.log("Copied to clipboard");
+    }).catch(err => {
+        console.error("Could not copy text: ", err);
+    });
 }
