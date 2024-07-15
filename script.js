@@ -50,6 +50,7 @@ class Random {
 }
 
 function performAction(action) {
+    console.log(`Action: ${action}`);
     const text = document.getElementById('inputText').value;
     const seed = parseInt(document.getElementById('seed').value);
     
@@ -66,6 +67,7 @@ function performAction(action) {
 }
 
 function purple(text, seed) {
+    console.log("Performing purple action");
     const key = generateKey(seed, text.length);
     const xorEncrypted = xorEncrypt(text, key);
     const base64Encrypted = btoa(xorEncrypted);
@@ -76,6 +78,7 @@ function purple(text, seed) {
 }
 
 function pink(text, seed) {
+    console.log("Performing pink action");
     const indexesStart = text.lastIndexOf('[');
     if (indexesStart === -1) {
         alert("Invalid format.");
