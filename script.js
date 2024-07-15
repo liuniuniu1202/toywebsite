@@ -1,4 +1,4 @@
-console.log("Script loaded bb");
+console.log("Script loaded cc");
 
 function generateKey(seed, length) {
     let random = new Random(seed);
@@ -119,4 +119,11 @@ async function pink(text, seed) {
     const decryptedText = decoder.decode(decryptedBytes);
 
     document.getElementById('outputText').value = decryptedText;
+}
+
+function copyToClipboard() {
+    const outputText = document.getElementById('outputText');
+    outputText.select();
+    document.execCommand("copy");
+    alert("Copied to clipboard!");
 }
