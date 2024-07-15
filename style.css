@@ -26,8 +26,6 @@ textarea {
 }
 
 button {
-    background-color: #4B0082;
-    color: #fff;
     border: none;
     padding: 10px 20px;
     margin: 10px;
@@ -37,7 +35,17 @@ button {
 }
 
 button:hover {
-    background-color: #6A0DAD; /* A lighter shade of purple */
+    opacity: 0.9;
+}
+
+button.purple {
+    background-color: #4B0082; /* Indigo */
+    color: #fff;
+}
+
+button.pink {
+    background-color: #DA70D6; /* Orchid */
+    color: #fff;
 }
 
 #outputText {
