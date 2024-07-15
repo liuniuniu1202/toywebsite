@@ -1,3 +1,5 @@
+console.log("Script loaded");
+
 function generateKey(seed, length) {
     let random = new Random(seed);
     let key = [];
