@@ -1,4 +1,4 @@
-console.log("Script loaded a");
+console.log("Script loaded");
 
 function generateKey(seed, length) {
     let random = new Random(seed);
@@ -70,7 +70,7 @@ class Random {
     }
 }
 
-function performAction(action) {
+async function performAction(action) {
     console.log(`Action: ${action}`);
     const text = document.getElementById('inputText').value;
     const seed = parseInt(document.getElementById('seed').value);
@@ -87,7 +87,7 @@ function performAction(action) {
     }
 }
 
-function purple(text, seed) {
+async function purple(text, seed) {
     console.log("Performing purple action");
     const encoder = new TextEncoder();
     const textBytes = encoder.encode(text);
@@ -96,20 +96,22 @@ function purple(text, seed) {
     const base64Encrypted = base64Encode(xorEncrypted);
     const { shuffled, indexes } = shuffleEncrypt(base64Encrypted, seed);
     const indexesStr = indexes.join(',');
-    document.getElementById('outputText').value = shuffled;
-    document.getElementById('outputIndexes').value = indexesStr;  // Store indexes separately for use in decryption
+    const finalEncrypted = shuffled + "|" + indexesStr;
+    document.getElementById('outputText').value = finalEncrypted;
 }
 
-function pink(text, seed) {
+async function pink(text, seed) {
     console.log("Performing pink action");
-    const indexesStr = document.getElementById('outputIndexes').value;  // Retrieve indexes for decryption
-    if (!indexesStr) {
-        alert("No previous encryption data available.");
+    const parts = text.split('|');
+    if (parts.length !== 2) {
+        alert("Invalid format.");
         return;
     }
     
-    const indexes = indexesStr.split(',').map(Number);
-    const base64Decrypted = shuffleDecrypt(text, indexes);
+    const encryptedPart = parts[0];
+    const indexes = parts[1].split(',').map(Number);
+
+    const base64Decrypted = shuffleDecrypt(encryptedPart, indexes);
     const xorEncrypted = base64Decode(base64Decrypted);
     const key = generateKey(seed, xorEncrypted.length);
     const decryptedBytes = xorDecrypt(xorEncrypted, key);
@@ -117,13 +119,4 @@ function pink(text, seed) {
     const decryptedText = decoder.decode(decryptedBytes);
 
     document.getElementById('outputText').value = decryptedText;
-}
-
-function copyToClipboard() {
-    const outputText = document.getElementById('outputText');
-    navigator.clipboard.writeText(outputText.value).then(() => {
-        console.log("Copied to clipboard");
-    }).catch(err => {
-        console.error("Could not copy text: ", err);
-    });
 }
